@@ -1,3 +1,5 @@
+import {useState} from 'react';
+import Login from './Counter.js'
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,7 +15,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const Tab = createMaterialBottomTabNavigator();
 
 export default function App() {
-  return (
+const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+if (userLoggedIn){
+  return(
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName='Home'
@@ -53,11 +58,13 @@ export default function App() {
       </Tab.Navigator>
     </NavigationContainer>
   );
+} else {
 
-
+  return (
+  <Login/>
+  )
 }
+}
+const styles = StyleSheet.create ({
 
-
-const styles = StyleSheet.create({
-  
 });
