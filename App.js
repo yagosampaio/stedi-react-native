@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Login from './Counter.js'
+import Login from './Login.js'
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -51,7 +51,7 @@ if (userLoggedIn){
           options={{
             tabBarLabel: 'Settings',
             tabBarIcon: ({ color }) => (
-              <FontAwesome name='gear' color={color} size={26} />
+              <FontAwesome name='check' color={color} size={26} />
             ),
           }}
         />
