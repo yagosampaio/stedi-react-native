@@ -5,7 +5,7 @@ import { TextInput } from "react-native-paper";
 
 const sendText=(phoneNumber)=>{
     console.log("PhoneNumber: ", phoneNumber);
-    await fetch("https://dev.stedi.me/twofactorlogin/" + phoneNumber, {
+    fetch("https://dev.stedi.me/twofactorlogin/" + phoneNumber, {
         method: "POST",
         headers: {
             "content-type":"application/text"
@@ -13,9 +13,34 @@ const sendText=(phoneNumber)=>{
     });
 }
 
-const Login = () => {
+
+const Login = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [oneTimePassword, setOneTimePassword] = useState(null);
+
+    const getToken = async () => {
+        const tokenResponse = await fetch('https://dev.stedi.me/twofactorlogin',{
+            method: 'POST',
+            body:JSON.stringify({oneTimePassword, phoneNumber}),
+            headers: {
+                'content-type':'application/json'
+            }
+        });
+    
+    const tokenResponseString = await tokenResponse.text();
+    
+    console.log('Token Response String: ' + tokenResponseString)
+
+    const emailResponse = await (await fetch('https://dev.stedi.me/validate/' + tokenResponseString)).text();
+
+    console.log(emailResponse);
+
+    if (tokenResponse.status == 200){
+        props.setUserLoggedIn(true);
+    }
+
+}
+
 
     return (
         <SafeAreaView>
@@ -26,6 +51,16 @@ const Login = () => {
                 placeholder="208-970-3605"
                 placeholderTextColor='#4251f5'
             />
+            <TouchableOpacity
+                style={styles.button}
+                flex="0.8"
+                onPress={()=>
+                    {console.log('OTP button was clicked');
+                    sendText(phoneNumber);
+                }}     
+            >
+            <Text>Send One-Time Password</Text>
+            </TouchableOpacity>
             <TextInput
                 style={styles.input}
                 onChangeText={setOneTimePassword}
@@ -39,7 +74,9 @@ const Login = () => {
                 style={styles.button}
                 onPress={()=>
                     {console.log('Login button was clicked');
-                    sendText(phoneNumber);
+                    console.log("Code: " + oneTimePassword);
+                    console.log('Verify if the OTP is correct');
+                    getToken();
                 }}     
             >
             <Text>Login</Text>
