@@ -18,7 +18,7 @@ const Login = (props) => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [oneTimePassword, setOneTimePassword] = useState(null);
 
-    const getToken = async () => {
+    const getToken = async ({ phoneNumber, oneTimePassword, setUserLoggedIn, setUsername}) => {
         const tokenResponse = await fetch('https://dev.stedi.me/twofactorlogin',{
             method: 'POST',
             body:JSON.stringify({oneTimePassword, phoneNumber}),
@@ -27,17 +27,25 @@ const Login = (props) => {
             }
         });
     
-    const tokenResponseString = await tokenResponse.text();
     
-    console.log('Token Response String: ' + tokenResponseString)
 
-    const emailResponse = await (await fetch('https://dev.stedi.me/validate/' + tokenResponseString)).text();
 
-    console.log(emailResponse);
 
     if (tokenResponse.status == 200){
         props.setUserLoggedIn(true);
     }
+    const tokenResponseString = await tokenResponse.text();
+    const emailResponse = await fetch('https://dev.stedi.me/validate/' + tokenResponseString);
+    const email = await emailResponse.text();
+
+    console.log('Token Response String: ' + tokenResponseString)
+        
+    console.log("email response: " + email);
+    setUsername(email);
+
+
+
+
 
 }
 
@@ -76,7 +84,7 @@ const Login = (props) => {
                     {console.log('Login button was clicked');
                     console.log("Code: " + oneTimePassword);
                     console.log('Verify if the OTP is correct');
-                    getToken();
+                    getToken({phoneNumber, oneTimePassword, setUserLoggedIn: props.setUserLoggedIn, setUsername: props.setUsername});
                 }}     
             >
             <Text>Login</Text>
